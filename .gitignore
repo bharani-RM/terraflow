@@ -4,3 +4,6 @@ uploads/
 __pycache__/
 *.pyc
 .pytest_cache/
+terraform.exe
+*.exe
+

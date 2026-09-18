@@ -17,12 +17,12 @@ def extract_hcl(response_text: str) -> str:
         return match.group(1).strip()
     return response_text.strip()
 
-def generate_terraform(requirements: TerraformRequirements) -> str:
+def generate_terraform(requirements: TerraformRequirements, access_key: str = "", secret_key: str = "") -> str:
     """
     Generates Terraform code from structured requirements.
     """
     try:
-        user_prompt = build_terraform_user_prompt(requirements)
+        user_prompt = build_terraform_user_prompt(requirements, access_key=access_key, secret_key=secret_key)
         
         response = client.chat.completions.create(
             model=GROQ_MODEL,

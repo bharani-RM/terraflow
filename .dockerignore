@@ -1,0 +1,16 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.git
+.gitignore
+venv/
+.venv/
+.env
+generated/*
+uploads/*
+terraform.exe
+*.exe
+.pytest_cache
+.vscode
+.idea

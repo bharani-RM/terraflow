@@ -1,0 +1,12 @@
+services:
+  terraform-ai-app:
+    build: .
+    container_name: terraform-ai-generator
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./generated:/app/generated
+      - ./uploads:/app/uploads
+    restart: unless-stopped

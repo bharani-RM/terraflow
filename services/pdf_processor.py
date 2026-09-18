@@ -6,7 +6,7 @@ def extract_text_from_pdf(pdf_file) -> str:
     Extracts text from a given PDF file object.
     
     Args:
-        pdf_file: A file-like object containing the PDF data (e.g., from Streamlit's file_uploader).
+        pdf_file: A file-like object containing the PDF data.
         
     Returns:
         str: The extracted text from the PDF.

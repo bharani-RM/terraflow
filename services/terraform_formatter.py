@@ -4,7 +4,7 @@ from config.settings import GENERATED_DIR
 
 def format_terraform(code: str) -> str:
     """
-    Saves the HCL code to a file and runs `terraform fmt`.
+    Saves the HCL code to a file and runs `terraform fmt` with timeout protection.
     Returns the formatted HCL code.
     """
     file_path = os.path.join(GENERATED_DIR, "main.tf")
@@ -14,13 +14,17 @@ def format_terraform(code: str) -> str:
         f.write(code)
         
     try:
-        # Run terraform fmt
+        from services.terminal_executor import get_terraform_bin
+        tf_bin = get_terraform_bin()
+
+        # Run terraform fmt with 5s timeout
         result = subprocess.run(
-            ["terraform", "fmt", "main.tf"],
+            [tf_bin, "fmt", "main.tf"],
             cwd=GENERATED_DIR,
             capture_output=True,
             text=True,
-            check=True
+            check=True,
+            timeout=5
         )
         
         # Read the formatted code back
@@ -28,10 +32,6 @@ def format_terraform(code: str) -> str:
             formatted_code = f.read()
             
         return formatted_code
-    except subprocess.CalledProcessError as e:
-        # If terraform fmt fails (e.g. invalid syntax), we might want to return the original code
-        # or raise an exception. For formatting, we can just return the original code and let
-        # validation catch the syntax error.
+    except Exception:
+        # If terraform fmt fails, times out, or CLI is missing, return original code
         return code
-    except FileNotFoundError:
-        raise Exception("Terraform CLI is not installed or not in PATH.")

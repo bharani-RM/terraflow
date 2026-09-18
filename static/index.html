@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraFlow | AI AWS Infrastructure Platform</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+
+    <!-- GLOBAL TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- GLOBAL NAVIGATION HEADER -->
+    <nav class="global-nav">
+        <a href="#" class="brand-logo" onclick="showView('landingView')">
+            <img src="/static/logo.png" alt="TerraFlow Logo" class="brand-logo-img">
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="#howItWorks" class="nav-link" onclick="showView('landingView')">How It Works</a></li>
+            <li><a href="#features" class="nav-link" onclick="showView('landingView')">Features</a></li>
+            <li><a href="#" class="nav-link" onclick="showView('dashboardView'); switchSidebarTab('requirements');">Workspace</a></li>
+        </ul>
+
+        <div class="nav-right">
+            <div id="globalAwsBadge" class="aws-status-badge">
+                <span class="aws-status-dot"></span>
+                <span>AWS Not Connected</span>
+            </div>
+            <button class="btn btn-primary" onclick="showView('dashboardView'); switchSidebarTab('requirements');">
+                Start Building →
+            </button>
+        </div>
+    </nav>
+
+    <!-- GLOBAL PIPELINE PROGRESS INDICATOR (Visible when in workspace) -->
+    <div id="globalPipelineBar" class="global-pipeline-bar">
+        <div class="pipeline-step active" id="pipeStep1">
+            <span class="step-num">1</span><span>AWS Connection</span>
+        </div>
+        <span class="pipeline-arrow">→</span>
+        <div class="pipeline-step" id="pipeStep2">
+            <span class="step-num">2</span><span>Requirements</span>
+        </div>
+        <span class="pipeline-arrow">→</span>
+        <div class="pipeline-step" id="pipeStep3">
+            <span class="step-num">3</span><span>Terraform</span>
+        </div>
+        <span class="pipeline-arrow">→</span>
+        <div class="pipeline-step" id="pipeStep4">
+            <span class="step-num">4</span><span>Review</span>
+        </div>
+        <span class="pipeline-arrow">→</span>
+        <div class="pipeline-step" id="pipeStep5">
+            <span class="step-num">5</span><span>Deploy</span>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         HOMEPAGE / LANDING PAGE VIEW
+         ========================================================================== -->
+    <div id="landingView" class="landing-container">
+        
+        <!-- HERO SECTION -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1>Build AWS Infrastructure with <span class="hero-gradient-text">AI Precision</span></h1>
+                <p class="hero-subtitle">
+                    Describe your infrastructure in plain English or upload a PDF. Generate production-ready Terraform HCL and deploy it directly to AWS.
+                </p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary" style="padding: 0.85rem 1.8rem; font-size: 1rem;" onclick="showView('dashboardView'); switchSidebarTab('requirements');">
+                        🚀 Start Building
+                    </button>
+                    <a href="#howItWorks" class="btn btn-secondary" style="padding: 0.85rem 1.6rem;">
+                        View How It Works
+                    </a>
+                </div>
+            </div>
+
+            <!-- ANIMATED CLOUD INFRASTRUCTURE VISUALIZATION -->
+            <div class="hero-viz-card">
+                <div class="hero-viz-title">
+                    <span>Automated Deployment Flow</span>
+                    <span style="color: var(--success); font-size: 0.75rem;">● Live Pipeline</span>
+                </div>
+                <div class="flow-diagram">
+                    <div class="flow-node">
+                        <div class="flow-icon">💬</div>
+                        <div class="flow-text">
+                            <h4>User Prompt / PDF</h4>
+                            <p>"VPC with 2 Subnets & Ubuntu EC2"</p>
+                        </div>
+                    </div>
+                    <div class="flow-line"><div class="pulse-dot"></div></div>
+                    
+                    <div class="flow-node">
+                        <div class="flow-icon">🤖</div>
+                        <div class="flow-text">
+                            <h4>AI Engine (Groq LLM)</h4>
+                            <p>Analyzes requirements & maps AWS resources</p>
+                        </div>
+                    </div>
+                    <div class="flow-line"><div class="pulse-dot"></div></div>
+
+                    <div class="flow-node">
+                        <div class="flow-icon">📄</div>
+                        <div class="flow-text">
+                            <h4>Terraform Code (HCL)</h4>
+                            <p>Formatted & syntax validated</p>
+                        </div>
+                    </div>
+                    <div class="flow-line"><div class="pulse-dot"></div></div>
+
+                    <div class="flow-node" style="border-color: rgba(34, 197, 94, 0.4); background: var(--success-bg);">
+                        <div class="flow-icon" style="color: var(--success); background: rgba(34, 197, 94, 0.15);">☁️</div>
+                        <div class="flow-text">
+                            <h4>AWS Cloud Provisioning</h4>
+                            <p>Explicit terminal execution (`init` → `plan` → `apply`)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- "HOW IT WORKS" SECTION -->
+        <section id="howItWorks" class="section-wrapper">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>From plain text prompt to live AWS resources in 5 simple steps.</p>
+            </div>
+
+            <div class="steps-grid">
+                <!-- Step 1 -->
+                <div class="step-card">
+                    <span class="step-card-num">Step 01</span>
+                    <div class="step-card-icon">🔑</div>
+                    <h3>Connect AWS</h3>
+                    <p>Securely provide your AWS credentials to authenticate with your AWS environment.</p>
+                    <div class="step-indicator-preview">AWS Credentials → AWS</div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step-card">
+                    <span class="step-card-num">Step 02</span>
+                    <div class="step-card-icon">📝</div>
+                    <h3>Describe Infrastructure</h3>
+                    <p>Enter a natural-language prompt or upload a PDF document containing requirements.</p>
+                    <div class="step-indicator-preview">Prompt | PDF Upload</div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-card">
+                    <span class="step-card-num">Step 03</span>
+                    <div class="step-card-icon">⚡</div>
+                    <h3>Generate Terraform</h3>
+                    <p>AI analyzes your requirements and builds valid, formatted HCL code.</p>
+                    <div class="step-indicator-preview">resource "aws_instance" {}</div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step-card">
+                    <span class="step-card-num">Step 04</span>
+                    <div class="step-card-icon">💻</div>
+                    <h3>Review & Edit</h3>
+                    <p>Inspect the generated code, view resource summaries, and edit in the IDE editor.</p>
+                    <div class="step-indicator-preview">Monaco Code Editor</div>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="step-card">
+                    <span class="step-card-num">Step 05</span>
+                    <div class="step-card-icon">🚀</div>
+                    <h3>Deploy to AWS</h3>
+                    <p>Execute Terraform commands line-by-line and monitor real-time infrastructure creation.</p>
+                    <div class="step-indicator-preview">Terraform → AWS</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURE HIGHLIGHTS -->
+        <section id="features" class="section-wrapper" style="padding-top: 0;">
+            <div class="section-header">
+                <h2>Engineered for Developers</h2>
+                <p>A production-grade platform combining AI intelligence with HashiCorp Terraform CLI.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Terraform Generation</h3>
+                    <p>Converts complex multi-resource architecture requests into modular Terraform HCL configurations.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📄</div>
+                    <h3>PDF to Infrastructure</h3>
+                    <p>Extracts architectural specifications directly from uploaded design PDFs using PyMuPDF.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💻</div>
+                    <h3>Terraform IDE Editorial</h3>
+                    <p>Full-featured Monaco code editor with file explorer, syntax highlighting, and code insights.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">☁️</div>
+                    <h3>Automated AWS Deployment</h3>
+                    <p>Executes native Terraform CLI deployment pipelines directly in secure containerized environments.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📟</div>
+                    <h3>Human-Readable Terminal</h3>
+                    <p>Formats complex raw Terraform CLI outputs into intuitive timestamped status events.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Architecture Diagram</h3>
+                    <p>Visualizes node state changes (`Pending` → `Creating` → `Created`) dynamically during deployment.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA BANNER -->
+        <section class="section-wrapper" style="padding-top: 0;">
+            <div class="cta-banner">
+                <h2>Ready to Provision Infrastructure?</h2>
+                <p>Start building AWS cloud environments in seconds with plain English prompts.</p>
+                <button class="btn btn-primary" style="padding: 0.9rem 2rem; font-size: 1rem;" onclick="showView('dashboardView'); switchSidebarTab('requirements');">
+                    Launch AI Workspace →
+                </button>
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2026 TerraFlow. Powered by FastAPI & HashiCorp Terraform CLI.</p>
+        </footer>
+    </div>
+
+    <!-- ==========================================================================
+         MAIN APPLICATION DASHBOARD WORKSPACE VIEW
+         ========================================================================== -->
+    <div id="dashboardView" class="dashboard-container hidden">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="sidebar">
+            <span class="sidebar-label">Navigation</span>
+            <button class="sidebar-nav-item" onclick="showView('landingView')">
+                <span class="sidebar-icon">🏠</span><span>Home Page</span>
+            </button>
+            <button class="sidebar-nav-item active" data-tab="credentials" onclick="switchSidebarTab('credentials')">
+                <span class="sidebar-icon">🔑</span><span>AWS Connection</span>
+            </button>
+            <button class="sidebar-nav-item" data-tab="requirements" onclick="switchSidebarTab('requirements')">
+                <span class="sidebar-icon">📝</span><span>Requirements</span>
+            </button>
+            <button class="sidebar-nav-item" data-tab="editor" onclick="switchSidebarTab('editor')">
+                <span class="sidebar-icon">💻</span><span>Terraform Editor</span>
+            </button>
+            <button class="sidebar-nav-item" data-tab="terminal" onclick="switchSidebarTab('terminal')">
+                <span class="sidebar-icon">📟</span><span>Terminal</span>
+            </button>
+            <button class="sidebar-nav-item" data-tab="infrastructure" onclick="switchSidebarTab('infrastructure')">
+                <span class="sidebar-icon">🌐</span><span>Managed Infrastructure</span>
+            </button>
+
+            <span class="sidebar-label" style="margin-top: 1.5rem; color: var(--error);">Danger Zone</span>
+            <button class="sidebar-nav-item destructive-item" data-tab="terminate" onclick="switchSidebarTab('terminate')">
+                <span class="sidebar-icon">🗑️</span><span>Terminate</span>
+            </button>
+        </aside>
+
+        <!-- MAIN WORKSPACE CONTENT -->
+        <main class="main-content">
+
+            <!-- DASHBOARD COMPACT STATUS SECTION -->
+            <div id="dashboardStatusBox" class="dashboard-status-card card-box">
+                <div class="card-box-header" style="margin-bottom: 0.75rem; padding-bottom: 0.5rem;">
+                    <span class="card-box-title" style="font-size: 1rem;">📊 TerraFlow Workspace Status</span>
+                    <span id="overallStateBadge" class="status-badge info">IDLE</span>
+                </div>
+                <div class="dash-status-grid">
+                    <div class="dash-status-item">
+                        <span class="dash-status-label">AWS Connection</span>
+                        <div id="dashAwsStatus" class="dash-status-val">
+                            <span class="status-dot gray"></span><span>Not Connected</span>
+                        </div>
+                    </div>
+                    <div class="dash-status-item">
+                        <span class="dash-status-label">Terraform</span>
+                        <div id="dashTfStatus" class="dash-status-val">
+                            <span class="status-dot gray"></span><span>Not Generated</span>
+                        </div>
+                    </div>
+                    <div class="dash-status-item">
+                        <span class="dash-status-label">Infrastructure</span>
+                        <div id="dashInfraStatus" class="dash-status-val">
+                            <span class="status-dot gray"></span><span>○ Not Running</span>
+                        </div>
+                    </div>
+                    <div class="dash-status-item">
+                        <span class="dash-status-label">Last Deployment</span>
+                        <div id="dashLastActivity" class="dash-status-val" style="color: var(--text-secondary); font-size: 0.85rem;">
+                            No deployments yet
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 1. AWS CREDENTIALS PANEL -->
+            <section id="awsCredentialsPanel" class="card-box">
+                <div class="card-box-header">
+                    <span class="card-box-title">🔑 AWS Connection Settings</span>
+                    <span id="awsConnectionBanner" class="status-badge info">Credentials Sensitive & Encrypted</span>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                    Enter your IAM Public Access Key and Secret Key used to authenticate Terraform against AWS APIs during infrastructure creation.
+                </p>
+                
+                <div class="grid-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="awsAccessKeyInput">AWS Access Key ID</label>
+                        <input type="password" id="awsAccessKeyInput" class="input-control" placeholder="e.g. AKIAIOSFODNN7EXAMPLE">
+                    </div>
+                    <div class="form-group">
+                        <label for="awsSecretKeyInput">AWS Secret Access Key</label>
+                        <div class="input-password-wrapper">
+                            <input type="password" id="awsSecretKeyInput" class="input-control" placeholder="e.g. wJalrXUtnFEMI/K7MDENG/bPxRfiCY">
+                            <button type="button" class="toggle-password-btn" id="toggleSecretBtn" onclick="togglePasswordVisibility('awsSecretKeyInput', 'toggleSecretBtn')">👁️</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="awsRegionSelect">AWS Region</label>
+                        <select id="awsRegionSelect" class="input-control">
+                            <option value="us-east-1">us-east-1 (N. Virginia)</option>
+                            <option value="us-west-2">us-west-2 (Oregon)</option>
+                            <option value="ap-south-1">ap-south-1 (Mumbai)</option>
+                            <option value="eu-west-1">eu-west-1 (Ireland)</option>
+                            <option value="ap-northeast-1">ap-northeast-1 (Tokyo)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                    <button class="btn btn-primary" onclick="connectAWS()">🟢 Connect AWS Credentials</button>
+                    <button class="btn btn-secondary" onclick="switchSidebarTab('requirements')">Skip to Requirements →</button>
+                </div>
+            </section>
+
+            <!-- 2. INFRASTRUCTURE REQUIREMENTS PANEL -->
+            <section id="requirementsPanel" class="card-box hidden">
+                <div class="card-box-header">
+                    <span class="card-box-title">📝 Infrastructure Requirements</span>
+                </div>
+
+                <div class="segmented-control">
+                    <button class="segmented-btn active" id="modePromptBtn" onclick="switchInputMode('prompt')">Natural Prompt</button>
+                    <button class="segmented-btn" id="modePdfBtn" onclick="switchInputMode('pdf')">PDF Upload</button>
+                </div>
+
+                <!-- Prompt Input -->
+                <div id="promptInputArea">
+                    <div class="form-group">
+                        <label for="promptTextarea">Describe your AWS infrastructure in plain English:</label>
+                        <textarea id="promptTextarea" class="input-control" style="min-height: 160px; font-family: var(--font-code);" placeholder="Example: Create a VPC with CIDR 10.0.0.0/16, two public subnets, an EC2 instance running Ubuntu with instance type t2.micro, and an S3 bucket named my-app-storage."></textarea>
+                    </div>
+                </div>
+
+                <!-- PDF Upload Input -->
+                <div id="pdfInputArea" class="hidden">
+                    <div class="file-drop-area" id="pdfDropzone" onclick="document.getElementById('pdfFileInputHidden').click()">
+                        <div class="drop-icon">📄</div>
+                        <h4 id="pdfDropText">Drag & drop your PDF here or browse files</h4>
+                        <p style="font-size:0.8rem; color:var(--text-tertiary); margin-top:0.4rem;">Supports architectural specification documents (.pdf)</p>
+                        <input type="file" id="pdfFileInputHidden" accept=".pdf" class="hidden" onchange="handlePdfDrop(event)">
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+                    <button class="btn btn-primary" id="generateCodeBtn" onclick="generateTerraform()">
+                        <span id="genSpinner" class="spinner hidden"></span>
+                        <span>✨ Generate Terraform Code</span>
+                    </button>
+                    <span id="genStatusText" style="font-size: 0.9rem; color: var(--text-secondary);"></span>
+                </div>
+            </section>
+
+            <!-- 3. TERRAFORM EDITORIAL / CODE REVIEW PAGE (IDE) -->
+            <section id="editorPanel" class="hidden">
+                <div class="dashboard-header flex justify-between items-center">
+                    <div>
+                        <h2>Terraform Configuration</h2>
+                        <p>Review and edit your generated infrastructure code before deployment.</p>
+                    </div>
+                    <div id="editorStatusBadge" class="status-badge info">
+                        ● Terraform Generated
+                    </div>
+                </div>
+
+                <div class="ide-layout">
+                    <!-- IDE Left: File Explorer -->
+                    <div class="ide-explorer">
+                        <span class="explorer-title">File Explorer</span>
+                        <ul class="file-tree">
+                            <li class="file-tree-item active">📄 main.tf</li>
+                            <li class="file-tree-item">📄 variables.tf</li>
+                            <li class="file-tree-item">📄 outputs.tf</li>
+                            <li class="file-tree-item">📄 provider.tf</li>
+                            <li class="file-tree-item">📄 terraform.tfvars</li>
+                        </ul>
+                    </div>
+
+                    <!-- IDE Center: Monaco Editor Container -->
+                    <div class="ide-editor-container">
+                        <div class="editor-toolbar">
+                            <div class="editor-tabs">
+                                <span class="editor-tab">main.tf</span>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="copyEditorCode()">📋 Copy</button>
+                                <a href="/api/download" download="main.tf" style="text-decoration: none;">
+                                    <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">📥 Download</button>
+                                </a>
+                            </div>
+                        </div>
+                        <div id="monacoContainer" class="monaco-editor-box"></div>
+                    </div>
+
+                    <!-- IDE Right: Infrastructure Summary & Insights -->
+                    <div class="ide-summary-panel">
+                        <div class="summary-block">
+                            <h4>Infrastructure Summary</h4>
+                            <ul class="summary-list">
+                                <li class="summary-item"><span>AWS Provider</span><strong style="color: var(--success);">Configured ✓</strong></li>
+                                <li class="summary-item"><span>VPC</span><strong id="sumVpc">0</strong></li>
+                                <li class="summary-item"><span>Subnets</span><strong id="sumSubnet">0</strong></li>
+                                <li class="summary-item"><span>EC2 Instances</span><strong id="sumEc2">0</strong></li>
+                                <li class="summary-item"><span>S3 Buckets</span><strong id="sumS3">0</strong></li>
+                                <li class="summary-item"><span>Security Groups</span><strong id="sumSg">0</strong></li>
+                                <li class="summary-item"><span>Load Balancers</span><strong id="sumAlb">0</strong></li>
+                            </ul>
+                        </div>
+
+                        <div class="summary-block">
+                            <h4>Code Insights</h4>
+                            <div id="codeInsightsList">
+                                <p style="font-size:0.8rem; color:var(--text-tertiary);">Syntax and security scan will update dynamically.</p>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: auto; display: flex; flex-direction: column; gap: 0.75rem;">
+                            <button class="btn btn-secondary" onclick="runCodeValidation()">Validate Terraform</button>
+                            <button class="btn btn-success" id="createInfraBtn" onclick="openDeployConfirmModal()">🚀 Create Infrastructure</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. DEPLOYMENT PROGRESS & HUMAN-READABLE TERMINAL -->
+            <section id="deploymentPanel" class="hidden">
+                <div class="dashboard-header flex justify-between items-center">
+                    <div>
+                        <h2 id="terminalHeaderTitle">Terraform Deployment</h2>
+                        <p id="terminalHeaderSubtitle">Live execution pipeline and human-readable terminal.</p>
+                    </div>
+                    <div id="terminalStatusBadge" class="status-badge info pulse-badge">
+                        ● EXECUTING
+                    </div>
+                </div>
+
+                <!-- Animated Terminal Header Execution Indicator Widget -->
+                <div id="terminalAnimWidget" class="terminal-anim-bar">
+                    <div class="anim-label-row flex justify-between">
+                        <span id="terminalAnimText" class="anim-text">Terraform is executing...</span>
+                        <span id="terminalAnimPercent" class="anim-percent">0%</span>
+                    </div>
+                    <div class="terminal-progress-track">
+                        <div id="terminalProgressFill" class="terminal-progress-fill"></div>
+                    </div>
+                    <div class="terminal-anim-dots flex gap-1 items-center" style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--accent-cyan);">
+                        <span class="pulse-dot-single">●</span>
+                        <span class="pulse-dot-single delay-1">●</span>
+                        <span class="pulse-dot-single delay-2">●</span>
+                        <span id="terminalAnimSubText" style="color: var(--text-secondary); margin-left: 0.5rem;">Communicating with AWS APIs</span>
+                    </div>
+                </div>
+
+                <!-- Step-by-Step Progress Tracker -->
+                <div class="deployment-progress-card">
+                    <div class="progress-steps-list">
+                        <div class="progress-step-item" id="deployStep1">
+                            <div class="progress-step-circle">1</div>
+                            <span class="progress-step-label">Preparing</span>
+                        </div>
+                        <div class="progress-step-item" id="deployStep2">
+                            <div class="progress-step-circle">2</div>
+                            <span class="progress-step-label">Initializing</span>
+                        </div>
+                        <div class="progress-step-item" id="deployStep3">
+                            <div class="progress-step-circle">3</div>
+                            <span class="progress-step-label">Validating</span>
+                        </div>
+                        <div class="progress-step-item" id="deployStep4">
+                            <div class="progress-step-circle">4</div>
+                            <span class="progress-step-label">Creating</span>
+                        </div>
+                        <div class="progress-step-item" id="deployStep5">
+                            <div class="progress-step-circle">5</div>
+                            <span class="progress-step-label">Complete</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Architecture Node Visualizer Diagram -->
+                <div class="arch-diagram-card">
+                    <span style="font-size:0.8rem; font-weight:700; color:var(--text-tertiary); text-transform:uppercase;">Infrastructure Resource Nodes</span>
+                    <div class="arch-nodes-grid">
+                        <div class="arch-node pending" id="nodeVpc">
+                            <span>🌐 VPC</span>
+                            <span class="node-status" style="font-size:0.75rem; color:var(--text-tertiary);">Pending</span>
+                        </div>
+                        <span style="color:var(--border-light);">→</span>
+                        <div class="arch-node pending" id="nodeSubnet">
+                            <span>🔀 Subnet</span>
+                            <span class="node-status" style="font-size:0.75rem; color:var(--text-tertiary);">Pending</span>
+                        </div>
+                        <span style="color:var(--border-light);">→</span>
+                        <div class="arch-node pending" id="nodeEc2">
+                            <span>🖥️ EC2</span>
+                            <span class="node-status" style="font-size:0.75rem; color:var(--text-tertiary);">Pending</span>
+                        </div>
+                        <span style="color:var(--border-light);">+</span>
+                        <div class="arch-node pending" id="nodeS3">
+                            <span>🪣 S3 Bucket</span>
+                            <span class="node-status" style="font-size:0.75rem; color:var(--text-tertiary);">Pending</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Human-Readable Terminal -->
+                <div class="human-terminal-box">
+                    <div class="terminal-top-bar flex justify-between items-center">
+                        <span>bash - terraform CLI console</span>
+                        <button class="btn btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="toggleRawLogs()">Show Raw Terraform Logs</button>
+                    </div>
+                    
+                    <div class="terminal-log-feed" id="terminalLogFeed">
+                        <div class="log-entry">
+                            <span class="log-time">[System]</span>
+                            <span class="log-msg info">$ Waiting for infrastructure execution trigger...</span>
+                        </div>
+                    </div>
+
+                    <div class="raw-logs-expander">
+                        <span style="font-size: 0.8rem; color: var(--text-tertiary);">Raw Terminal Logs Output:</span>
+                        <pre class="raw-logs-content hidden" id="rawLogsContent"></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. SUCCESS SCREEN VIEW -->
+            <section id="successPanel" class="hidden">
+                <div class="result-card">
+                    <div class="result-icon success animated-check-icon">✓</div>
+                    <h2>Infrastructure Created Successfully</h2>
+                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">Your requested AWS infrastructure has been provisioned and configured.</p>
+
+                    <div class="result-summary-grid">
+                        <div class="summary-stat">
+                            <label>Status</label>
+                            <p style="color: var(--success);">✓ Successful</p>
+                        </div>
+                        <div class="summary-stat">
+                            <label>Resources</label>
+                            <p id="statResourceCount">8</p>
+                        </div>
+                        <div class="summary-stat">
+                            <label>Duration</label>
+                            <p id="statDuration">1m 24s</p>
+                        </div>
+                        <div class="summary-stat">
+                            <label>AWS Region</label>
+                            <p id="statRegion">us-east-1</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
+                        <button class="btn btn-secondary" onclick="switchSidebarTab('infrastructure')">View Infrastructure</button>
+                        <button class="btn btn-secondary" onclick="switchSidebarTab('editor')">View Terraform</button>
+                        <button class="btn btn-secondary" onclick="switchSidebarTab('terminal')">View Terminal Logs</button>
+                        <button class="btn btn-danger" onclick="switchSidebarTab('terminate')">Terminate Infrastructure</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. ERROR SCREEN VIEW -->
+            <section id="errorPanel" class="hidden">
+                <div class="result-card">
+                    <div class="result-icon error">✖</div>
+                    <h2 style="color: var(--error);">Deployment Failed</h2>
+                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">Terraform CLI encountered an error during infrastructure execution.</p>
+
+                    <div style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; text-align: left; max-width: 700px; margin: 2rem auto;">
+                        <h4 style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Terraform Output / Error Breakdown:</h4>
+                        <pre id="errorMsgBox" style="font-family: var(--font-code); font-size: 0.85rem; color: var(--error); white-space: pre-wrap; word-break: break-all; max-height: 200px; overflow-y: auto;"></pre>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: center;">
+                        <button class="btn btn-secondary" onclick="switchSidebarTab('editor')">View Terraform</button>
+                        <button class="btn btn-secondary" onclick="switchSidebarTab('terminal')">View Full Logs</button>
+                        <button class="btn btn-primary" onclick="openDeployConfirmModal()">Retry Deployment</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. MANAGED INFRASTRUCTURE RESOURCES PANEL -->
+            <section id="infrastructurePanel" class="hidden">
+                <div class="dashboard-header flex justify-between items-center">
+                    <div>
+                        <h2>Managed Infrastructure</h2>
+                        <p>Real-time AWS infrastructure verified directly via AWS SDK APIs.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <button class="btn btn-secondary" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;" onclick="syncWithAWS()">
+                            ↻ Sync with AWS
+                        </button>
+                        <div class="aws-region-pill">
+                            <span>AWS Region:</span> <strong id="infraRegionBadge">us-east-1</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AWS Real-Time Synchronization Status Bar -->
+                <div class="sync-bar-container">
+                    <div class="sync-info">
+                        <span id="syncStatusDot" class="status-dot green"></span>
+                        <span id="syncStatusTitle" style="font-weight: 600; color: var(--text-primary);">Infrastructure State Synchronized</span>
+                        <span id="syncLastVerifiedBadge" class="sync-time-badge">Last verified: Just now</span>
+                    </div>
+                    <span style="font-size: 0.8rem; color: var(--text-tertiary);">Source of Truth: Live AWS SDK APIs</span>
+                </div>
+
+                <!-- Section A: Currently Active Infrastructure -->
+                <div class="card-box" style="margin-bottom: 1.5rem;">
+                    <div class="card-box-header flex justify-between items-center">
+                        <span class="card-box-title">🟢 Currently Active AWS Infrastructure</span>
+                        <span id="activeResCountBadge" class="status-badge success" style="font-size: 0.75rem;">0 Active</span>
+                    </div>
+                    <div id="managedResourcesGrid" class="managed-resources-grid">
+                        <!-- Dynamically populated running resource cards -->
+                    </div>
+                </div>
+
+                <!-- Section B: Externally Deleted Resources -->
+                <div id="externallyDeletedSection" class="externally-deleted-box hidden">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                        <h4 style="font-size: 0.95rem; color: var(--error); margin: 0;">⚠ Resources Deleted Outside TerraFlow</h4>
+                        <span id="deletedResCountBadge" class="status-badge error" style="font-size: 0.75rem;">0 Detected</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                        These resources were present in TerraFlow's state record but were detected as deleted directly from the AWS Console or AWS CLI.
+                    </p>
+                    <div id="deletedResourcesGrid" class="managed-resources-grid">
+                        <!-- Dynamically populated externally deleted resource cards -->
+                    </div>
+                </div>
+
+                <!-- Section C: Execution Performance Breakdown Card -->
+                <div id="perfMetricsCard" class="perf-metrics-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase;">⚡ Deployment Execution Performance</span>
+                        <span style="font-size: 0.8rem; color: var(--accent-cyan);" id="perfTotalLabel">Total: 0s</span>
+                    </div>
+                    <div class="perf-metrics-grid">
+                        <div class="perf-metric-item">
+                            <span class="perf-metric-label">Terraform Init</span>
+                            <span class="perf-metric-val" id="metricInit">0.0s</span>
+                        </div>
+                        <div class="perf-metric-item">
+                            <span class="perf-metric-label">Terraform Plan/Apply</span>
+                            <span class="perf-metric-val" id="metricApply">0.0s</span>
+                        </div>
+                        <div class="perf-metric-item">
+                            <span class="perf-metric-label">AWS API Verification</span>
+                            <span class="perf-metric-val" id="metricVerify">0.0s</span>
+                        </div>
+                        <div class="perf-metric-item">
+                            <span class="perf-metric-label">Total Execution</span>
+                            <span class="perf-metric-val" id="metricTotal">0.0s</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section D: Deployment History Timeline -->
+                <div class="card-box" style="margin-top: 1.5rem;">
+                    <div class="card-box-header">
+                        <span class="card-box-title">📜 Deployment & Synchronization History</span>
+                    </div>
+                    <div id="deploymentHistoryList" class="history-timeline">
+                        <!-- Dynamically populated historical entries -->
+                    </div>
+                </div>
+
+                <!-- Section E: Termination Zone -->
+                <div class="card-box destructive-zone-card" style="margin-top: 2rem;">
+                    <div class="card-box-header">
+                        <span class="card-box-title" style="color: var(--error);">⚠ Infrastructure Termination Zone</span>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                        Permanently destroy all AWS resources managed by this TerraFlow deployment. Pre-destruction verification will ensure only existing resources are targeted.
+                    </p>
+                    <button class="btn btn-danger" onclick="openTerminateConfirmModal1()">
+                        🗑️ Terminate Infrastructure
+                    </button>
+                </div>
+            </section>
+
+            <!-- 8. TERMINATE INFRASTRUCTURE PANEL -->
+            <section id="terminatePanel" class="hidden">
+                <div class="dashboard-header">
+                    <h2 style="color: var(--error);">Terminate Infrastructure</h2>
+                    <p>Safely destroy cloud resources created by TerraFlow state.</p>
+                </div>
+
+                <div class="card-box destructive-zone-card">
+                    <div class="card-box-header">
+                        <span class="card-box-title" style="color: var(--error);">⚠ Destructive Operation Warning</span>
+                    </div>
+                    <p style="font-size: 0.95rem; color: var(--text-primary); margin-bottom: 1rem;">
+                        This section allows you to destroy infrastructure previously created by TerraFlow. This will run <code>terraform destroy</code> against your connected AWS environment.
+                    </p>
+                    
+                    <div class="resource-breakdown-box" style="margin-bottom: 1.5rem;">
+                        <span class="breakdown-title">Target Managed Resources for Destruction</span>
+                        <div id="terminateTargetList" class="breakdown-grid">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <button class="btn btn-danger" style="padding: 0.85rem 1.8rem; font-size: 1rem;" onclick="openTerminateConfirmModal1()">
+                        🗑️ Terminate Infrastructure
+                    </button>
+                </div>
+            </section>
+
+            <!-- 9. TERMINATION SUCCESS PANEL -->
+            <section id="terminationSuccessPanel" class="hidden">
+                <div class="result-card">
+                    <div class="result-icon success animated-check-icon">✓</div>
+                    <h2>Infrastructure Terminated</h2>
+                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">The TerraFlow-managed infrastructure has been successfully removed.</p>
+
+                    <div class="result-summary-grid">
+                        <div class="summary-stat">
+                            <label>Status</label>
+                            <p style="color: var(--success);">✓ Complete</p>
+                        </div>
+                        <div class="summary-stat">
+                            <label>Resources</label>
+                            <p id="statDestroyedCount">8 removed</p>
+                        </div>
+                        <div class="summary-stat">
+                            <label>Duration</label>
+                            <p id="statDestroyDuration">58s</p>
+                        </div>
+                    </div>
+
+                    <div class="term-anim-sequence" style="margin: 2rem auto; max-width: 400px;">
+                        <div class="term-step flex items-center justify-between">
+                            <span>AWS Infrastructure</span>
+                            <span>↓</span>
+                            <span>Removing...</span>
+                            <span>↓</span>
+                            <strong style="color: var(--success);">✓ Resources Removed</strong>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: center;">
+                        <button class="btn btn-secondary" onclick="showView('landingView')">Back to Dashboard</button>
+                        <button class="btn btn-primary" onclick="switchSidebarTab('requirements')">Create New Infrastructure</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 10. TERMINATION FAILURE PANEL -->
+            <section id="terminationErrorPanel" class="hidden">
+                <div class="result-card">
+                    <div class="result-icon error">⚠</div>
+                    <h2 style="color: var(--error);">Infrastructure Termination Failed</h2>
+                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">Some resources could not be completely removed by Terraform destroy.</p>
+
+                    <div style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; text-align: left; max-width: 700px; margin: 2rem auto;">
+                        <h4 style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Terraform Error Breakdown:</h4>
+                        <pre id="destroyErrorMsgBox" style="font-family: var(--font-code); font-size: 0.85rem; color: var(--error); white-space: pre-wrap; word-break: break-all; max-height: 200px; overflow-y: auto;"></pre>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: center;">
+                        <button class="btn btn-secondary" onclick="switchSidebarTab('terminal')">View Full Logs</button>
+                        <button class="btn btn-danger" onclick="openTerminateConfirmModal1()">Retry Termination</button>
+                        <button class="btn btn-secondary" onclick="switchSidebarTab('editor')">View Terraform</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ==========================================================================
+         MODAL OVERLAYS & DIALOGS
+         ========================================================================== -->
+
+    <!-- 1. GENERATING TERRAFORM ANIMATED MODAL -->
+    <div id="generationModal" class="modal-overlay hidden">
+        <div class="modal-card generation-card">
+            <div class="gen-matrix-bg"></div>
+            <div class="modal-header">
+                <h3>Generating Terraform</h3>
+                <p>TerraFlow is analyzing your requirements and generating the infrastructure configuration.</p>
+            </div>
+
+            <div class="generation-anim-wrapper">
+                <div class="gen-indicator-bar">
+                    <span class="gen-pulse-dot"></span>
+                    <span id="genStageLabel">Analyzing requirements...</span>
+                </div>
+                <div class="gen-progress-track">
+                    <div id="genProgressFill" class="gen-progress-fill"></div>
+                </div>
+
+                <!-- Animated Flow Sequence -->
+                <div class="gen-flow-sequence">
+                    <div class="gen-flow-step" id="genSeq1">Analyzing requirements</div>
+                    <span class="gen-flow-arrow">↓</span>
+                    <div class="gen-flow-step" id="genSeq2">Understanding AWS resources</div>
+                    <span class="gen-flow-arrow">↓</span>
+                    <div class="gen-flow-step" id="genSeq3">Designing infrastructure</div>
+                    <span class="gen-flow-arrow">↓</span>
+                    <div class="gen-flow-step" id="genSeq4">Generating Terraform</div>
+                    <span class="gen-flow-arrow">↓</span>
+                    <div class="gen-flow-step" id="genSeq5">Preparing configuration</div>
+                </div>
+
+                <!-- Checklist -->
+                <div class="gen-checklist-box">
+                    <div class="gen-checklist-item" id="chkStep1"><span class="chk-icon pending">○</span> <span>Requirements analyzed</span></div>
+                    <div class="gen-checklist-item" id="chkStep2"><span class="chk-icon pending">○</span> <span>AWS resources identified</span></div>
+                    <div class="gen-checklist-item" id="chkStep3"><span class="chk-icon pending">○</span> <span>Terraform configuration generated</span></div>
+                    <div class="gen-checklist-item" id="chkStep4"><span class="chk-icon pending">○</span> <span>Configuration ready for review</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. CODE GENERATED SUCCESS NOTIFICATION MODAL -->
+    <div id="generatedSuccessModal" class="modal-overlay hidden">
+        <div class="modal-card success-gen-card">
+            <div class="success-checkmark-wrapper">
+                <div class="animated-checkmark">✓</div>
+            </div>
+            <h3>✓ Terraform Code Generated</h3>
+            <p class="modal-subtitle">Your infrastructure configuration has been successfully generated and is ready for review.</p>
+
+            <div class="summary-box">
+                <span class="summary-box-title">Terraform Generation Complete</span>
+                <div class="summary-box-grid">
+                    <div><span>Files generated:</span> <strong>5</strong></div>
+                    <div><span>Resources detected:</span> <strong id="genSuccessResCount">8</strong></div>
+                    <div><span>Status:</span> <strong style="color: var(--success);">Ready for Review</strong></div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="closeModal('generatedSuccessModal'); switchSidebarTab('editor');">
+                    Review Terraform
+                </button>
+                <button class="btn btn-success" onclick="closeModal('generatedSuccessModal'); openDeployConfirmModal();">
+                    Create Infrastructure
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. CREATE INFRASTRUCTURE CONFIRMATION DIALOG -->
+    <div id="deployConfirmModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Create AWS Infrastructure?</h3>
+                <p>TerraFlow is ready to execute this Terraform configuration against your connected AWS environment.</p>
+            </div>
+
+            <div class="resource-breakdown-box">
+                <span class="breakdown-title">Resources to Create</span>
+                <div id="deployResourceBreakdown" class="breakdown-grid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal('deployConfirmModal')">Cancel</button>
+                <button class="btn btn-success" onclick="closeModal('deployConfirmModal'); startDeploymentExecution();">
+                    Start Deployment
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. FIRST TERMINATION CONFIRMATION DIALOG -->
+    <div id="terminateConfirmModal1" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 style="color: var(--error);">⚠ Terminate Infrastructure?</h3>
+                <p>This action will run Terraform destroy and remove infrastructure managed by this TerraFlow deployment.</p>
+            </div>
+
+            <div class="resource-breakdown-box">
+                <span class="breakdown-title">Resources to be removed</span>
+                <div id="terminateResourceBreakdown" class="breakdown-grid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <div class="warning-alert-box">
+                <strong>⚠ Warning:</strong> This action may permanently delete cloud resources and associated data. Make sure you no longer need these resources before continuing.
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal('terminateConfirmModal1')">Cancel</button>
+                <button class="btn btn-danger" onclick="closeModal('terminateConfirmModal1'); openTerminateConfirmModal2();">
+                    Continue to Termination
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. SECOND SAFETY TERMINATION CONFIRMATION DIALOG -->
+    <div id="terminateConfirmModal2" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 style="color: var(--error);">Confirm Destruction</h3>
+                <p>To confirm destruction of TerraFlow-managed infrastructure, please type <strong>TERMINATE</strong> below.</p>
+            </div>
+
+            <div class="form-group" style="margin: 1.5rem 0;">
+                <label for="terminateInputText" style="color: var(--text-primary); font-weight: 600;">Type TERMINATE to continue:</label>
+                <input type="text" id="terminateInputText" class="input-control" placeholder="TERMINATE" oninput="validateTerminateInput()">
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal('terminateConfirmModal2')">Cancel</button>
+                <button class="btn btn-danger" id="confirmTerminateFinalBtn" disabled onclick="closeModal('terminateConfirmModal2'); startTerminationExecution();">
+                    Terminate Infrastructure
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
