@@ -58,7 +58,7 @@ def setup_terraform_environment(access_key: str, secret_key: str, region: str) -
         env["AWS_REGION"] = region.strip()
 
     # Provider Plugin Caching & Non-interactive Automation flags
-    plugin_cache_dir = os.path.join(GENERATED_DIR, ".terraform.d", "plugin-cache")
+    plugin_cache_dir = os.path.abspath(os.path.join(GENERATED_DIR, ".terraform.d", "plugin-cache"))
     os.makedirs(plugin_cache_dir, exist_ok=True)
     env["TF_PLUGIN_CACHE_DIR"] = plugin_cache_dir
     env["TF_IN_AUTOMATION"] = "1"

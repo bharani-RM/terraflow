@@ -745,9 +745,19 @@ function openDeployConfirmModal() {
     openModal('deployConfirmModal');
 }
 
-/* ==========================================================================
-   Automated Deployment Terminal Pipeline & Timing Parser
-   ========================================================================== */
+function updateDeploymentStepTracker(stepNum) {
+    for (let i = 1; i <= 5; i++) {
+        const el = document.getElementById(`deployStep${i}`);
+        if (el) {
+            el.classList.remove('active', 'completed');
+            if (i < stepNum) {
+                el.classList.add('completed');
+            } else if (i === stepNum) {
+                el.classList.add('active');
+            }
+        }
+    }
+}
 
 async function startDeploymentExecution() {
     updateAppStatus("DEPLOYING", "Executing terraform apply pipeline");

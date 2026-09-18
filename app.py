@@ -151,7 +151,7 @@ def deploy_infrastructure(req: DeployRequest):
         for chunk in generator:
             yield chunk
 
-    return StreamingResponse(log_stream(), media_type="text/plain")
+    return StreamingResponse(log_stream(), media_type="text/plain; charset=utf-8")
 
 @app.post("/api/destroy")
 def destroy_infrastructure(req: DestroyRequest):
@@ -165,7 +165,7 @@ def destroy_infrastructure(req: DestroyRequest):
         for chunk in generator:
             yield chunk
 
-    return StreamingResponse(log_stream(), media_type="text/plain")
+    return StreamingResponse(log_stream(), media_type="text/plain; charset=utf-8")
 
 @app.post("/api/validate")
 def validate_code(req: ValidateRequest):
